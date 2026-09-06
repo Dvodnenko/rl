@@ -1,5 +1,5 @@
 [project]
-name = "rli"
+name = "rl"
 version = "0.1.0"
 description = "Reinforcement Learning Implementations"
 authors = [
