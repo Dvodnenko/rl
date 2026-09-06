@@ -33,16 +33,16 @@ class GridWorld:
             Action.DOWN: np.array([1, 0]), #  south/down
             Action.LEFT: np.array([0, -1]), #  west/left
         },
-        current_state: np.ndarray = np.array([0,0])
+        cs: np.ndarray = np.array([0,0])
     ):
         self.states = states
         self.actions = actions
         self.policy = policy
-        self.current_state = current_state
+        self.cs = cs
 
     @property
     def value(self) -> int:
-        return self.states[self.current_state[0], self.current_state[1]]
+        return self.states[self.cs[0], self.cs[1]]
 
     def move(self, action: Action):
-        self.current_state += self.actions[action]
+        self.cs += self.actions[action]
