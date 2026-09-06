@@ -18,8 +18,10 @@ class GridWorld:
         self,
         states: np.ndarray, # 5x5 matrix
         actions: dict,
-        policy: Policy
+        policy: Policy,
+        current_state: np.ndarray = np.zeros(2)
     ):
         self.states = states
         self.actions = actions
         self.policy = policy
+        self.current_state = current_state
