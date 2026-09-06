@@ -30,3 +30,6 @@ class GridWorld:
         self.actions = actions
         self.policy = policy
         self.current_state = current_state
+
+    def move(self, action: int):
+        self.current_state += self.actions[action]
