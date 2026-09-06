@@ -24,7 +24,7 @@ class GridWorld:
             2: np.array([1, 0]), #  east/right
             3: np.array([-1, 0]) #  west/left
         },
-        current_state: np.ndarray = np.zeros(2)
+        current_state: np.ndarray = np.array([0,0])
     ):
         self.states = states
         self.actions = actions
