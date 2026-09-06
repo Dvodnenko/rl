@@ -1,7 +1,7 @@
 # Implementation of the grid world
 # problem from S&B
 
-import time
+from enum import Enum
 
 import numpy as np
 
@@ -15,16 +15,23 @@ class Policy:
         ...
 
 
+class Action(Enum):
+    UP = "up"
+    RIGHT = "right"
+    DOWN = "down"
+    LEFT = "left"
+
+
 class GridWorld:
     def __init__(
         self,
         states: np.ndarray, # 5x5 matrix
         policy: Policy,
         actions: dict = {
-            1: np.array([-1, 0]), #  north/up
-            2: np.array([1, 0]), #  south/down
-            3: np.array([0, 1]), #  east/right
-            4: np.array([0, -1]) #  west/left
+            Action.UP: np.array([-1, 0]), #  north/up
+            Action.RIGHT: np.array([0, 1]), #  east/right
+            Action.DOWN: np.array([1, 0]), #  south/down
+            Action.LEFT: np.array([0, -1]), #  west/left
         },
         current_state: np.ndarray = np.array([0,0])
     ):
@@ -33,5 +40,5 @@ class GridWorld:
         self.policy = policy
         self.current_state = current_state
 
-    def move(self, action: int):
+    def move(self, action: Action):
         self.current_state += self.actions[action]
