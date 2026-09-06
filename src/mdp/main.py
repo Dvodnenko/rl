@@ -41,14 +41,38 @@ class GridWorld:
         self.cs = cs
 
         # special states A, A', B, B'
-        self.A =  np.array([0, 1])
+        self.A  = np.array([0, 1])
         self.Ap = np.array([4,1])
-        self.B =  np.array([0, 3])
+        self.B  = np.array([0, 3])
         self.Bp = np.array([2, 3])
 
     @property
     def value(self) -> int:
         return self.states[self.cs[0], self.cs[1]]
 
-    def move(self, action: Action):
+    def move(self, action: Action) -> int:
+        """
+        returns a reward for the chosen action
+        
+        return +10 for moving out of state A, +5 for moving out of B,
+        -1 for actions that would take the agent out of the board, 0 otherwise
+        """
+
+        if self.cs == self.A:
+            self.cs = self.Ap
+            return 10
+        elif self.cs == self.B:
+            self.cs = self.Bp
+            return 5
+
+        if action == Action.UP and self.cs[0] == 0:
+            return -1
+        elif action == Action.DOWN and self.cs[0] == 4:
+            return -1
+        elif action == Action.RIGHT and self.cs[1] == 4:
+            return -1
+        elif action == Action.LEFT and self.cs[1] == 0:
+            return -1
+
         self.cs += self.actions[action]
+        return 0
