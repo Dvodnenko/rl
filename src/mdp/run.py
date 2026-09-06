@@ -12,4 +12,4 @@ gw = GridWorld(
 
 gw.move(Action.UP)
 print(gw.states)
-print(gw.current_state, gw.states[gw.current_state[0], gw.current_state[1]])
+print(gw.current_state, gw.value)
