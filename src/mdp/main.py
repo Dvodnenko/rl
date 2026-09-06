@@ -19,10 +19,10 @@ class GridWorld:
         states: np.ndarray, # 5x5 matrix
         policy: Policy,
         actions: dict = {
-            0: np.array([0, 1]), #  north/up
-            1: np.array([0, -1]), # south/down
-            2: np.array([1, 0]), #  east/right
-            3: np.array([-1, 0]) #  west/left
+            1: np.array([0, 1]), #  north/up
+            2: np.array([0, -1]), # south/down
+            3: np.array([1, 0]), #  east/right
+            4: np.array([-1, 0]) #  west/left
         },
         current_state: np.ndarray = np.array([0,0])
     ):
