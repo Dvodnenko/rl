@@ -40,6 +40,12 @@ class GridWorld:
         self.policy = policy
         self.cs = cs
 
+        # special states A, A', B, B'
+        self.A =  np.array([0, 1])
+        self.Ap = np.array([4,1])
+        self.B =  np.array([0, 3])
+        self.Bp = np.array([2, 3])
+
     @property
     def value(self) -> int:
         return self.states[self.cs[0], self.cs[1]]
