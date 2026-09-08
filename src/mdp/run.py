@@ -1,12 +1,12 @@
 import numpy as np
 
-from .main import GridWorld, Policy, Action
+from .main import GridWorld, Action
 
 
 
 gw = GridWorld(
     np.arange(1, 26).reshape((5,5)),
-    policy=Policy(),
+    policy=lambda: None,
     cs=np.array([2, 2])
 )
 
