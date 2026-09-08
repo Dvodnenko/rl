@@ -1,6 +1,7 @@
 # Implementation of the grid world
 # problem from S&B
 
+import random
 from enum import Enum
 from typing import Callable
 
@@ -41,6 +42,14 @@ class GridWorld:
     @property
     def value(self) -> int:
         return self.states[self.cs[0], self.cs[1]]
+
+    def select_action(self) -> Action:
+        point = random.uniform(0, 1)
+        cumulative = 0.0
+        for action in Action:
+            cumulative += self.policy(action, self.cs)
+            if point <= cumulative:
+                return action
 
     def move(self, action: Action) -> int:
         """
