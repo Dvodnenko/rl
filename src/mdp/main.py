@@ -34,7 +34,7 @@ class GridWorld:
 
         # special states A, A', B, B'
         self.A  = np.array([0, 1])
-        self.Ap = np.array([4,1])
+        self.Ap = np.array([4, 1])
         self.B  = np.array([0, 3])
         self.Bp = np.array([2, 3])
 
@@ -50,10 +50,10 @@ class GridWorld:
         -1 for actions that would take the agent out of the board, 0 otherwise
         """
 
-        if self.cs == self.A:
+        if self.cs[0] == self.A[0] and self.cs[1] == self.A[1]:
             self.cs = self.Ap
             return 10
-        elif self.cs == self.B:
+        elif self.cs[0] == self.B[0] and self.cs[1] == self.B[1]:
             self.cs = self.Bp
             return 5
 
