@@ -19,7 +19,7 @@ class GridWorld:
     def __init__(
         self,
         states: np.ndarray, # 5x5 matrix
-        policy: Callable,
+        policy: Callable[[Action, np.ndarray], float],
         actions: dict = {
             Action.UP: np.array([-1, 0]), #  north/up
             Action.RIGHT: np.array([0, 1]), #  east/right
