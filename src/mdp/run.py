@@ -16,14 +16,20 @@ gw.move(Action.UP)
 
 
 t = 0
-while True:
-    time.sleep(1)
-    
-    S_t = gw.cs
-    A_t = gw.select_action()
-    print(f"t={t}, S_{t} = {S_t}, A_t {A_t.value}")
-    R_t1 = gw.move(A_t)
-    print(f"R_{t+1} = {"+" if R_t1 > 0 else ""}{R_t1}, S_{t+1} = {gw.cs}")
-    print()
 
-    t += 1
+def random_walk(gw: GridWorld):
+    while True:
+        time.sleep(1)
+        
+        S_t = gw.cs
+        A_t = gw.select_action()
+        print(f"t={t}, S_{t} = {S_t}, A_t {A_t.value}")
+        R_t1 = gw.move(A_t)
+        print(f"R_{t+1} = {"+" if R_t1 > 0 else ""}{R_t1}, S_{t+1} = {gw.cs}")
+        print()
+
+        t += 1
+
+
+if __name__ == "__main__":
+    random_walk(gw)
