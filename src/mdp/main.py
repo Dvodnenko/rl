@@ -77,3 +77,77 @@ class GridWorld:
 
         self.cs += self.actions[action]
         return 0
+
+    def value_function(self, gamma: float = 0.9) -> np.ndarray:
+        """
+        Solves the Bellman equation for v_pi directly via linear algebra:
+ 
+            v_pi = (I - gamma * P_pi)^-1 r_pi
+ 
+        instead of iterative policy evaluation. States are indexed here by
+        grid *position* (row-major, 0..24) rather than by the arbitrary
+        values stored in self.states -- position is what determines
+        transitions and rewards. The result is reshaped back to the same
+        shape as self.states.
+ 
+        Note: self.policy takes a single (action, state) pair, so building
+        the per-state action-probability array needs a loop over the 25
+        states x 4 actions (100 calls) -- unavoidable given that interface.
+        This is not the iterative sweep-until-convergence loop of classic
+        policy evaluation, it's just populating a matrix. The transition
+        and reward computation itself is fully vectorized over all states
+        at once, for every action.
+        """
+        n_rows, n_cols = self.states.shape
+        n_states = n_rows * n_cols
+ 
+        row_idx, col_idx = np.divmod(np.arange(n_states), n_cols)
+        coords = np.stack([row_idx, col_idx], axis=1)  # shape (n_states, 2)
+        state_idx = np.arange(n_states)
+ 
+        A_idx = self.A[0] * n_cols + self.A[1]
+        Ap_idx = self.Ap[0] * n_cols + self.Ap[1]
+        B_idx = self.B[0] * n_cols + self.B[1]
+        Bp_idx = self.Bp[0] * n_cols + self.Bp[1]
+ 
+        P = np.zeros((n_states, n_states))
+        R = np.zeros(n_states)
+ 
+        for action, delta in self.actions.items():
+            # policy only accepts one state at a time -> loop needed here
+            probs = np.array([self.policy(action, coord) for coord in coords])
+ 
+            new_rows = coords[:, 0] + delta[0]
+            new_cols = coords[:, 1] + delta[1]
+ 
+            off_grid = (
+                (new_rows < 0) | (new_rows >= n_rows) |
+                (new_cols < 0) | (new_cols >= n_cols)
+            )
+ 
+            new_rows_clipped = np.clip(new_rows, 0, n_rows - 1)
+            new_cols_clipped = np.clip(new_cols, 0, n_cols - 1)
+            next_state = new_rows_clipped * n_cols + new_cols_clipped
+            next_state = np.where(off_grid, state_idx, next_state)  # bounce back
+ 
+            reward = np.where(off_grid, -1.0, 0.0)
+ 
+            # special states override the action entirely, regardless of
+            # which action was chosen (mirrors the logic in move())
+            is_A = state_idx == A_idx
+            is_B = state_idx == B_idx
+ 
+            next_state = np.where(is_A, Ap_idx, next_state)
+            reward = np.where(is_A, 10.0, reward)
+ 
+            next_state = np.where(is_B, Bp_idx, next_state)
+            reward = np.where(is_B, 5.0, reward)
+ 
+            P[state_idx, next_state] += probs
+            R += probs * reward
+ 
+        I = np.eye(n_states)
+        v = np.linalg.solve(I - gamma * P, R)
+ 
+        return v.reshape(n_rows, n_cols)
+

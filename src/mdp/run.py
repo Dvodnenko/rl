@@ -32,4 +32,4 @@ def random_walk(gw: GridWorld):
 
 
 if __name__ == "__main__":
-    random_walk(gw)
+    print(gw.value_function(0.9))
