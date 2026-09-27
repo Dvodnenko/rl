@@ -12,3 +12,12 @@ class Environment:
         if point <= self.p_h: # if heads
             return amount
         return -amount
+
+
+class Agent:
+    def __init__(self, env: Environment, state: int = 10):
+        self.env = env
+        self.state = state
+
+        self.policy: dict[int, int] = {
+            s: s for s in range(1, self.state+1)}
