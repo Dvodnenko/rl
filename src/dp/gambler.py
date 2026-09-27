@@ -28,6 +28,11 @@ class Agent:
     def bet(self, amount: int):
         reward = self.env.bet(amount)
         self.state += reward
+
+        if self.state != 0: # if not lost
+            self.policy = {
+                s: s for s in range(1, self.state+1)}
+
         return reward
 
     def step(self):
@@ -38,7 +43,7 @@ class Agent:
 
 def episode():
     env = Environment()
-    agent = Agent(env, 50)
+    agent = Agent(env, 40)
 
     while True:
         state = agent.step()
@@ -46,7 +51,7 @@ def episode():
         if state == 0:
             print("Loss, bankrupt")
             break
-        elif state == 100:
+        elif state >= 100:
             print("Won 100 bucks")
             break
 
