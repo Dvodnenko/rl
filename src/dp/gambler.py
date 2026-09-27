@@ -24,3 +24,13 @@ class Agent:
 
     def select_bet(self):
         return self.policy[self.state]
+
+    def bet(self, amount: int):
+        reward = self.env.bet(amount)
+        self.state += reward
+        return reward
+
+    def step(self):
+        amount = self.select_bet()
+        self.bet(amount)
+        return self.state
