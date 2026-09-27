@@ -21,3 +21,6 @@ class Agent:
 
         self.policy: dict[int, int] = {
             s: s for s in range(1, self.state+1)}
+
+    def select_bet(self):
+        return self.policy[self.state]
