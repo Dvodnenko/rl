@@ -34,3 +34,22 @@ class Agent:
         amount = self.select_bet()
         self.bet(amount)
         return self.state
+
+
+def episode():
+    env = Environment()
+    agent = Agent(env, 50)
+
+    while True:
+        state = agent.step()
+        print(state)
+        if state == 0:
+            print("Loss, bankrupt")
+            break
+        elif state == 100:
+            print("Won 100 bucks")
+            break
+
+
+if __name__ == "__main__":
+    episode()
