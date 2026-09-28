@@ -19,8 +19,18 @@ class Agent:
         self.env = env
         self.state = state
 
+        # initial policy says to bet all money the gambler has
         self.policy: dict[int, int] = {
             s: s for s in range(1, self.state+1)}
+
+    def pi_a_s(self, a: int, s: int):
+        """
+        self.policy is deterministic, but the Bellman
+        equation uses stochastic one. this function 
+        treats self.policy as a stochastic policy
+        """
+        
+        return int(self.policy[s] == a)
 
     def select_bet(self):
         return self.policy[self.state]
