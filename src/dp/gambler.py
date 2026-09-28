@@ -19,9 +19,17 @@ class Agent:
         self.env = env
         self.state = state
 
+        self.actions: list[int] = []
+        self._update_action_space()
         # initial policy says to bet all money the gambler has
         self.policy: dict[int, int] = {
             s: s for s in range(1, self.state+1)}
+
+    def _update_action_space(self):
+        self.actions = [
+            a for a in range(
+                0, min(self.state, 100-self.state)+1
+            )]
 
     def pi_a_s(self, a: int, s: int):
         """
@@ -29,7 +37,7 @@ class Agent:
         equation uses stochastic one. this function 
         treats self.policy as a stochastic policy
         """
-        
+
         return int(self.policy[s] == a)
 
     def select_bet(self):
@@ -39,13 +47,10 @@ class Agent:
         coefficient = self.env.bet()
         self.state += coefficient*amount
 
-        if self.state != 0: # if not lost
-            self.policy = {
-                s: s for s in range(1, self.state+1)}
-
     def step(self):
         amount = self.select_bet()
         self.bet(amount)
+        self._update_action_space()
         return int(self.state == 100), self.state
 
 
