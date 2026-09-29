@@ -15,9 +15,10 @@ class Environment:
 
 
 class Agent:
-    def __init__(self, env: Environment, state: int = 10):
+    def __init__(self, env: Environment, state: int = 10, gamma: float = .9):
         self.env = env
         self.state = state
+        self.gamma = gamma
 
         self.actions: list[int] = []
         self._update_action_space()
@@ -53,14 +54,19 @@ class Agent:
         self._update_action_space()
         return int(self.state == 100), self.state
 
+    def transitions(self, a: int):
+        win, lose = self.state + a, self.state - a
+
+        return [
+            (self.env.p_h, win, 1.0 if win == 100 else 0.0),
+            (1 - self.env.p_h, lose, 0.0),
+        ]
+
 
 def episode():
     env = Environment()
-    state = 50
+    state = 10
     agent = Agent(env, state)
-
-    while state not in (0, 100):
-        state = agent.step()[1]
 
     return state
 
