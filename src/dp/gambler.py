@@ -20,17 +20,12 @@ class Agent:
         self.state = state
         self.gamma = gamma
 
-        self.actions: list[int] = []
-        self._update_action_space()
         # initial policy says to bet all money the gambler has
         self.policy: dict[int, int] = {
             s: s for s in range(1, self.state+1)}
 
-    def _update_action_space(self):
-        self.actions = [
-            a for a in range(
-                0, min(self.state, 100-self.state)+1
-            )]
+    def actions(self, s: int):
+        return [a for a in range(0, min(s, 100-s)+1)]
 
     def pi_a_s(self, a: int, s: int):
         """
@@ -51,7 +46,6 @@ class Agent:
     def step(self):
         amount = self.select_bet()
         self.bet(amount)
-        self._update_action_space()
         return int(self.state == 100), self.state
 
     def transitions(self, a: int):
