@@ -1,6 +1,8 @@
 # implementation of the Gambler's Problem (Example 4.3) from S&B
 
+import sys
 import random
+import json
 
 
 class Environment:
@@ -57,13 +59,27 @@ class Agent:
             (1 - self.env.p_h, lose, 0.0),
         ]
 
+    # value iteration part
+    
+    def value_iteration(self, s: int):
+        self.v[s] = max(
+            sum(p * (r + self.gamma * self.v[s2])
+                for p, s2, r in self.transitions(s, a))
+            for a in self.actions(s)
+        )
+
 
 def episode():
-    env = Environment()
+    env = Environment(.4)
     state = 10
     agent = Agent(env, state)
 
-    return state
+    for i in range(20):
+        print(f"iteration {i}")
+        for s in range(1, 100):
+            agent.value_iteration(s)
+
+    json.dump(agent.v, sys.stdout, indent=4)
 
 
 if __name__ == "__main__":
