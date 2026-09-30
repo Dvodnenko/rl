@@ -15,11 +15,12 @@ class Environment:
 
 
 class Agent:
-    def __init__(self, env: Environment, state: int = 10, gamma: float = .9):
+    def __init__(self, env: Environment, state: int = 10, gamma: float = 1):
         self.env = env
         self.state = state
         self.gamma = gamma
 
+        self.v = {s: 0 for s in range(0, 101)} # terminal states (0 & 100) included
         # initial policy says to bet all money the gambler has
         self.policy: dict[int, int] = {
             s: s for s in range(1, self.state+1)}
@@ -48,8 +49,8 @@ class Agent:
         self.bet(amount)
         return int(self.state == 100), self.state
 
-    def transitions(self, a: int):
-        win, lose = self.state + a, self.state - a
+    def transitions(self, s: int, a: int):
+        win, lose = s + a, s - a
 
         return [
             (self.env.p_h, win, 1.0 if win == 100 else 0.0),
