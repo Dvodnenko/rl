@@ -34,3 +34,23 @@ def episode(s: np.ndarray):
         s = move(s, random.choice([0, 1, 2, 3]))
         G -= 1
     return G
+
+
+def evaluate(s: np.ndarray):
+    """evaluates v_π(s) for π = equiprobable policy"""
+    n_episodes = 10000
+
+    returns = np.zeros(n_episodes)
+
+    for i in range(n_episodes):
+        G = episode(s) # computes return of an episode 
+        returns[i] = G
+
+    avg = np.average(returns)
+    return avg
+
+
+if __name__ == "__main__":
+    s = np.array([1, 1])
+    v = evaluate(s)
+    print(v)
