@@ -14,15 +14,13 @@ actions = {
 
 
 def move(s: np.ndarray, a: int):
-    if a == 0 and s[0] == 0:
-        return s
-    elif a == 1 and s[1] == 3:
-        return s
-    elif a == 2 and s[0] == 3:
-        return s
-    elif a == 3 and s[1] == 0:
-        return s
-    return s + actions[a]
+    new = s + actions[a]
+
+    if (new[0] < 0 or new[0] > 3) \
+        or (new[1] < 0 or new[1] > 3): # if the action would take agent out of grid...
+        return s # don't move
+
+    return new
 
 
 def episode(s: np.ndarray):
