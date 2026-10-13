@@ -29,20 +29,8 @@ def move(s: np.ndarray, a: int):
 
     return new
 
-def select_action(actions: np.ndarray):
-    """
-    selects actions for stochastic policies
-    """
 
-    point = random.random() # [0,1)
-    cumulative = 0.0
-    for action in (0, 1, 2, 3):
-        cumulative += actions[action]
-        if point < cumulative:
-            return action
-
-
-def episode(pi: np.ndarray, s: np.ndarray, a: int):
+def episode(pi: list, s: np.ndarray, a: int):
     G = 0
 
     if gw[s[0], s[1]] in (0, 15):
@@ -52,12 +40,12 @@ def episode(pi: np.ndarray, s: np.ndarray, a: int):
     G -= 1
 
     while (v := gw[s[0], s[1]]) not in (0, 15): # while in non-terminal state
-        s = move(s, select_action(pi[v]))
+        s = move(s, random.choice(pi[v]))
         G -= 1
     return G
 
 
-def q_pi(pi: np.ndarray, s: np.ndarray, a: int):
+def q_pi(pi: list, s: np.ndarray, a: int):
     """
     evaluates q_π(s,a)
     """
@@ -73,7 +61,7 @@ def q_pi(pi: np.ndarray, s: np.ndarray, a: int):
     return avg
 
 
-def all_q_values(pi: np.ndarray):
+def all_q_values(pi: list):
     q_values = np.zeros(64).reshape(16, 4)
 
     states = [np.array([y, x]) 
@@ -90,7 +78,7 @@ def all_q_values(pi: np.ndarray):
 
 
 if __name__ == "__main__":
-    random_policy = np.zeros(64).reshape(16, 4) + .25
+    random_policy = [[a for a in range (4)] for _ in range(16)]
     s = np.array([0, 2])
     q = q_pi(random_policy, s, 3)
     print(q)
