@@ -22,4 +22,16 @@ def control(policy: list):
 random_policy = [[a for a in range (4)] for _ in range(16)]
 new_policy = control(random_policy)
 new_policy = np.array([a[0] for a in new_policy]).reshape(4, 4)
-print(new_policy)
+
+arrs = {
+    0: "↑",
+    1: "→",
+    2: "↓",
+    3: "←",
+}
+
+arrows = [i for i in range(16)]
+for i, a in enumerate(new_policy.reshape(16)):
+    arrows[i] = arrs[a]
+
+print(np.array(arrows).reshape(4, 4))
