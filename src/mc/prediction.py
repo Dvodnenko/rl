@@ -30,23 +30,32 @@ def move(s: np.ndarray, a: int):
     return new
 
 
-def episode(s: np.ndarray):
+def episode(s: np.ndarray, a: int):
     G = 0
 
+    if gw[s[0], s[1]] in (0, 15):
+        return G
+
+    s = move(s, a)
+    G -= 1
+
     while gw[s[0], s[1]] not in (0, 15): # while in non-terminal state
-        s = move(s, random.choice([0, 1, 2, 3]))
+        s = move(s, random.choice((0, 1, 2, 3)))
         G -= 1
     return G
 
 
-def evaluate(s: np.ndarray):
-    """evaluates v_π(s) for π = equiprobable policy"""
-    n_episodes = 100
+def q_pi(s: np.ndarray, a: int):
+    """
+    evaluates q_π(s,a) for π = random policy 
+    (π(a|s) = 1/4 for all actions and states)
+    """
+    n_episodes = 1000
 
     returns = np.zeros(n_episodes)
 
     for i in range(n_episodes):
-        G = episode(s) # computes return of an episode 
+        G = episode(s, a) # computes return of an episode 
         returns[i] = G
 
     avg = np.average(returns)
@@ -54,6 +63,6 @@ def evaluate(s: np.ndarray):
 
 
 if __name__ == "__main__":
-    s = np.array([3, 0])
-    v = evaluate(s)
-    print(v)
+    s = np.array([0, 2])
+    q = q_pi(s, 1)
+    print(q)
