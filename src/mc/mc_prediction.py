@@ -28,9 +28,7 @@ def move(s: np.ndarray, a: int):
 def episode(s: np.ndarray):
     G = 0
 
-    for t in range(1000):
-        if gw[s[0], s[1]] in (0, 15): # if in terminal state
-            break
+    while gw[s[0], s[1]] not in (0, 15): # while in non-terminal state
         s = move(s, random.choice([0, 1, 2, 3]))
         G -= 1
     return G
@@ -38,7 +36,7 @@ def episode(s: np.ndarray):
 
 def evaluate(s: np.ndarray):
     """evaluates v_π(s) for π = equiprobable policy"""
-    n_episodes = 10000
+    n_episodes = 100
 
     returns = np.zeros(n_episodes)
 
@@ -51,6 +49,6 @@ def evaluate(s: np.ndarray):
 
 
 if __name__ == "__main__":
-    s = np.array([1, 1])
+    s = np.array([3, 0])
     v = evaluate(s)
     print(v)
