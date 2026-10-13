@@ -72,7 +72,6 @@ def all_q_values(pi: list):
         number: int = gw[s[0], s[1]]
         for a in actions:
             q_values[number, a] = q_pi(pi, s, a)
-            print(f"state {number}, action {a} completed")
 
     return q_values
 
