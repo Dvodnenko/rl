@@ -29,8 +29,20 @@ def move(s: np.ndarray, a: int):
 
     return new
 
+def select_action(actions: np.ndarray):
+    """
+    selects actions for stochastic policies
+    """
 
-def episode(s: np.ndarray, a: int):
+    point = random.random() # [0,1)
+    cumulative = 0.0
+    for action in (0, 1, 2, 3):
+        cumulative += actions[action]
+        if point < cumulative:
+            return action
+
+
+def episode(pi: np.ndarray, s: np.ndarray, a: int):
     G = 0
 
     if gw[s[0], s[1]] in (0, 15):
@@ -39,30 +51,29 @@ def episode(s: np.ndarray, a: int):
     s = move(s, a)
     G -= 1
 
-    while gw[s[0], s[1]] not in (0, 15): # while in non-terminal state
-        s = move(s, random.choice((0, 1, 2, 3)))
+    while (v := gw[s[0], s[1]]) not in (0, 15): # while in non-terminal state
+        s = move(s, select_action(pi[v]))
         G -= 1
     return G
 
 
-def q_pi(s: np.ndarray, a: int):
+def q_pi(pi: np.ndarray, s: np.ndarray, a: int):
     """
-    evaluates q_π(s,a) for π = random policy 
-    (π(a|s) = 1/4 for all actions and states)
+    evaluates q_π(s,a)
     """
-    n_episodes = 100
 
+    n_episodes = 1000
     returns = np.zeros(n_episodes)
 
     for i in range(n_episodes):
-        G = episode(s, a) # computes return of an episode 
+        G = episode(pi, s, a) # computes return of an episode 
         returns[i] = G
 
     avg = np.average(returns)
     return avg
 
 
-def all_q_values():
+def all_q_values(pi: np.ndarray):
     q_values = np.zeros(64).reshape(16, 4)
 
     states = [np.array([y, x]) 
@@ -72,14 +83,14 @@ def all_q_values():
     for s in states:
         number: int = gw[s[0], s[1]]
         for a in actions:
-            q_values[number, a] = q_pi(s, a)
+            q_values[number, a] = q_pi(pi, s, a)
             print(f"state {number}, action {a} completed")
 
     return q_values
 
 
 if __name__ == "__main__":
-    # s = np.array([0, 2])
-    # q = q_pi(s, 1)
-    # print(q)
-    print(all_q_values())
+    random_policy = np.zeros(64).reshape(16, 4) + .25
+    s = np.array([0, 2])
+    q = q_pi(random_policy, s, 3)
+    print(q)
