@@ -1,3 +1,10 @@
+"""
+implementation of monte carlo evaluation for grid
+world from chapter 4. only includes prediction, no 
+improvement yet
+"""
+
+
 import random
 
 import numpy as np
