@@ -50,7 +50,7 @@ def q_pi(s: np.ndarray, a: int):
     evaluates q_π(s,a) for π = random policy 
     (π(a|s) = 1/4 for all actions and states)
     """
-    n_episodes = 1000
+    n_episodes = 100
 
     returns = np.zeros(n_episodes)
 
@@ -62,7 +62,24 @@ def q_pi(s: np.ndarray, a: int):
     return avg
 
 
+def all_q_values():
+    q_values = np.zeros(64).reshape(16, 4)
+
+    states = [np.array([y, x]) 
+        for y in range(0, 4) for x in range(0, 4)]
+    actions = (0, 1, 2, 3)
+
+    for s in states:
+        number: int = gw[s[0], s[1]]
+        for a in actions:
+            q_values[number, a] = q_pi(s, a)
+            print(f"state {number}, action {a} completed")
+
+    return q_values
+
+
 if __name__ == "__main__":
-    s = np.array([0, 2])
-    q = q_pi(s, 1)
-    print(q)
+    # s = np.array([0, 2])
+    # q = q_pi(s, 1)
+    # print(q)
+    print(all_q_values())
