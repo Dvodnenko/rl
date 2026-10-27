@@ -26,6 +26,10 @@ def update_sarsa(Q, alpha, gamma, s, a, r, s_prime, a_prime) -> float:
     return Q[gw[s[0], s[1]],a] + alpha*(
         r + gamma*Q[gw[s_prime[0],s_prime[1]],a_prime] - Q[gw[s[0],s[1]],a])
 
+def update_ql(Q, alpha, gamma, s, a, r, s_prime) -> float:
+    return Q[gw[s[0], s[1]],a] + alpha*(
+        r + gamma*np.max(Q[gw[s_prime[0],s_prime[1]]]) - Q[gw[s[0],s[1]],a])
+
 def episode_sarsa(
     Q: np.ndarray,
     s: np.ndarray = np.array([3, 0]),
