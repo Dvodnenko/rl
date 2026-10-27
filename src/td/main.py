@@ -61,3 +61,22 @@ def episode(
         A = A_prime
 
     return Q
+
+
+if __name__ == "__main__":
+    Q = np.zeros(48*4).reshape(48, 4)
+    for _ in range(500):
+        Q = episode(Q)
+    learned_actions = np.argmax(Q, axis=1)
+    
+    arrs = {
+        0: "↑",
+        1: "→",
+        2: "↓",
+        3: "←",
+    }
+
+    arrows = [i for i in range(48)]
+    for i, a in enumerate(learned_actions):
+        arrows[i] = arrs[a]
+    print(np.array(arrows).reshape(4, 12))
