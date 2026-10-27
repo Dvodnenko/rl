@@ -1,6 +1,7 @@
 import random
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 # environment
@@ -66,20 +67,35 @@ def episode(
     return Q, total_reward
 
 
-if __name__ == "__main__":
+def run():
     Q = np.zeros(48*4).reshape(48, 4)
-    for _ in range(500):
-        Q, _ = episode(Q)
-    learned_actions = np.argmax(Q, axis=1)
-    
-    arrs = {
-        0: "↑",
-        1: "→",
-        2: "↓",
-        3: "←",
-    }
+    rewards = np.zeros(500)
+    for i in range(500):
+        Q, rewards[i] = episode(Q)
+    return rewards
 
-    arrows = [i for i in range(48)]
-    for i, a in enumerate(learned_actions):
-        arrows[i] = arrs[a]
-    print(np.array(arrows).reshape(4, 12))
+
+if __name__ == "__main__":
+    
+    # arrs = {
+    #     0: "↑",
+    #     1: "→",
+    #     2: "↓",
+    #     3: "←",
+    # }
+
+    # arrows = [i for i in range(48)]
+    # for i, a in enumerate(learned_actions):
+    #     arrows[i] = arrs[a]
+    # print(np.array(arrows).reshape(4, 12))
+    rewards = np.zeros(50_000).reshape(100, 500)
+
+    for r in range(100):
+        run_rewards = run()
+        for e in range(500):
+            rewards[r, e] = run_rewards[e]
+    avg = np.mean(rewards, axis=0)
+
+    plt.ylim(-100, 0)
+    plt.plot(avg)
+    plt.show()
