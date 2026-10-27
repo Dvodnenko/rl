@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 
 
@@ -18,3 +20,44 @@ def move(s: np.ndarray, a: int):
         return s # don't move
 
     return new
+
+def episode(
+    Q: np.ndarray,
+    s: np.ndarray = np.array([3, 0]),
+    alpha: float = .5,
+    gamma: float = 1,
+    epsilon: float = .1,
+):
+    # initially, Q(s,a) = 0 for all states and actions
+
+    A = None
+    if random.random() < epsilon:
+        A = random.choice((0, 1, 2, 3))
+    else:
+        A = np.argmax(Q[gw[s[0], s[1]]])
+
+    while not (s[0] == 3 and s[1] == 11):
+
+        # 1. take action A, observe S' and R
+        s_prime = move(s, A)
+        r = -1 # -1 by default, for each move
+        if s_prime[0] == 3 and s_prime[1] not in (0, 11): # if in cliff
+            r = -100
+            s_prime = np.array([3, 0])
+
+        # 2. select action A' from state S'
+        A_prime = None
+        if random.random() < epsilon:
+            A_prime = random.choice((0, 1, 2, 3))
+        else:
+            A_prime = np.argmax(Q[gw[s_prime[0], s_prime[1]]])
+
+        # 3. update Q(S,A)
+        Q[gw[s[0], s[1]],A]+=alpha*(
+            r+gamma*Q[gw[s_prime[0],s_prime[1]],A_prime]-Q[gw[s[0],s[1]],A])
+
+        # 4. rewrite S <- S'; A <- A'
+        s = s_prime
+        A = A_prime
+
+    return Q
