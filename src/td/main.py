@@ -26,7 +26,7 @@ def update_sarsa(Q, alpha, gamma, s, a, r, s_prime, a_prime) -> float:
     return Q[gw[s[0], s[1]],a] + alpha*(
         r + gamma*Q[gw[s_prime[0],s_prime[1]],a_prime] - Q[gw[s[0],s[1]],a])
 
-def episode(
+def episode_sarsa(
     Q: np.ndarray,
     s: np.ndarray = np.array([3, 0]),
     alpha: float = .5,
@@ -70,11 +70,11 @@ def episode(
     return Q, total_reward
 
 
-def run():
+def run_sarsa():
     Q = np.zeros(48*4).reshape(48, 4)
     rewards = np.zeros(500)
     for i in range(500):
-        Q, rewards[i] = episode(Q)
+        Q, rewards[i] = episode_sarsa(Q)
     return rewards
 
 
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     rewards = np.zeros(50_000).reshape(100, 500)
 
     for r in range(100):
-        run_rewards = run()
+        run_rewards = run_sarsa()
         for e in range(500):
             rewards[r, e] = run_rewards[e]
     avg = np.mean(rewards, axis=0)
