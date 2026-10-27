@@ -22,6 +22,10 @@ def move(s: np.ndarray, a: int):
 
     return new
 
+def update_sarsa(Q, alpha, gamma, s, a, r, s_prime, a_prime) -> float:
+    return Q[gw[s[0], s[1]],a] + alpha*(
+        r + gamma*Q[gw[s_prime[0],s_prime[1]],a_prime] - Q[gw[s[0],s[1]],a])
+
 def episode(
     Q: np.ndarray,
     s: np.ndarray = np.array([3, 0]),
@@ -55,8 +59,7 @@ def episode(
             A_prime = np.argmax(Q[gw[s_prime[0], s_prime[1]]])
 
         # 3. update Q(S,A)
-        Q[gw[s[0], s[1]],A]+=alpha*(
-            r+gamma*Q[gw[s_prime[0],s_prime[1]],A_prime]-Q[gw[s[0],s[1]],A])
+        Q[gw[s[0], s[1]], A] = update_sarsa(Q, alpha, gamma, s, A, r, s_prime, A_prime)
 
         # 4. rewrite S <- S'; A <- A'
         s = s_prime
