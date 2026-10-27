@@ -73,12 +73,56 @@ def episode_sarsa(
 
     return Q, total_reward
 
+def episode_ql(
+    Q: np.ndarray,
+    s: np.ndarray = np.array([3, 0]),
+    alpha: float = .5,
+    gamma: float = 1,
+    epsilon: float = .1,
+):
+    # initially, Q(s,a) = 0 for all states and actions
+
+    total_reward = 0
+    while not (s[0] == 3 and s[1] == 11):
+
+        # 1. select action A
+        A = None
+        if random.random() < epsilon:
+            A = random.choice((0, 1, 2, 3))
+        else:
+            A = np.argmax(Q[gw[s[0], s[1]]])
+
+        # 2. take action A, observe S' and R
+        s_prime = move(s, A)
+        r = -1 # -1 by default, for each move
+        if s_prime[0] == 3 and s_prime[1] not in (0, 11): # if in cliff
+            r = -100
+            s_prime = np.array([3, 0])
+
+        # 3. update Q(S,A)
+        Q[gw[s[0], s[1]], A] = update_ql(Q, alpha, gamma, s, A, r, s_prime)
+
+        # 4. rewrite S <- S'
+        s = s_prime
+
+        total_reward += r
+
+    return Q, total_reward
+
+
 
 def run_sarsa():
     Q = np.zeros(48*4).reshape(48, 4)
     rewards = np.zeros(500)
     for i in range(500):
         Q, rewards[i] = episode_sarsa(Q)
+    return rewards
+
+def run_ql():
+    Q = np.zeros(48*4).reshape(48, 4)
+    rewards = np.zeros(500)
+    for i in range(500):
+        Q, rewards[i] = episode_ql(Q)
     return rewards
 
 
@@ -95,14 +139,27 @@ if __name__ == "__main__":
     # for i, a in enumerate(learned_actions):
     #     arrows[i] = arrs[a]
     # print(np.array(arrows).reshape(4, 12))
-    rewards = np.zeros(50_000).reshape(100, 500)
+    rewards_sarsa = np.zeros(50_000).reshape(100, 500)
+    rewards_ql = np.zeros(50_000).reshape(100, 500)
 
     for r in range(100):
         run_rewards = run_sarsa()
         for e in range(500):
-            rewards[r, e] = run_rewards[e]
-    avg = np.mean(rewards, axis=0)
+            rewards_sarsa[r, e] = run_rewards[e]
+    avg_sarsa = np.mean(rewards_sarsa, axis=0)
+
+    for r in range(100):
+        run_rewards = run_ql()
+        for e in range(500):
+            rewards_ql[r, e] = run_rewards[e]
+    avg_ql = np.mean(rewards_ql, axis=0)
 
     plt.ylim(-100, 0)
-    plt.plot(avg)
+    plt.plot(avg_sarsa, label="Sarsa", color="blue")
+    plt.plot(avg_ql, label="Q-learning", color="red")
+
+    plt.xlabel("Episodes")
+    plt.ylabel("Sum of rewards during episode")
+    plt.legend()
+
     plt.show()
