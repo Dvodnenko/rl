@@ -36,6 +36,7 @@ def episode(
     else:
         A = np.argmax(Q[gw[s[0], s[1]]])
 
+    total_reward = 0
     while not (s[0] == 3 and s[1] == 11):
 
         # 1. take action A, observe S' and R
@@ -60,13 +61,15 @@ def episode(
         s = s_prime
         A = A_prime
 
-    return Q
+        total_reward += r
+
+    return Q, total_reward
 
 
 if __name__ == "__main__":
     Q = np.zeros(48*4).reshape(48, 4)
     for _ in range(500):
-        Q = episode(Q)
+        Q, _ = episode(Q)
     learned_actions = np.argmax(Q, axis=1)
     
     arrs = {
