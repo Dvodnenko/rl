@@ -56,3 +56,19 @@ def step(
     terminal = is_terminal(s)
 
     return Q, s, terminal
+
+def episode(
+    Q_x: dict,
+    Q_o: dict,
+    s: str,
+    alpha: float = .5,
+    gamma: float = 1,
+    epsilon: float = .1,
+):
+    terminal = False
+    while not terminal:
+        Q_x, s, terminal = step('x', Q_x, s, alpha, gamma, epsilon)
+        if terminal: break
+        Q_o, s, terminal = step('o', Q_o, s, alpha, gamma, epsilon)
+
+    return Q_x, Q_o
