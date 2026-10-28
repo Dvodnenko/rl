@@ -19,3 +19,7 @@ def A(s: str) -> list[int]:
 
 Q_x: dict[str, dict[int, float]] = {}
 Q_o: dict[str, dict[int, float]] = {}
+
+def update(Q, alpha, gamma, s, a, r, s_prime) -> float:
+    return Q[s,a] + alpha*(
+        r + gamma*max(Q[s], key=Q[s].get) - Q[s,a])
