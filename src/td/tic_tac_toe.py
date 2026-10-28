@@ -16,3 +16,6 @@ def A(s: str) -> list[int]:
         if v == '-':
             a.append(i)
     return a
+
+Q_x: dict[str, dict[int, float]] = {}
+Q_o: dict[str, dict[int, float]] = {}
