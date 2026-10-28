@@ -21,8 +21,8 @@ Q_x: dict[str, dict[int, float]] = {}
 Q_o: dict[str, dict[int, float]] = {}
 
 def update(Q, alpha, gamma, s, a, r, s_prime) -> float:
-    return Q[s,a] + alpha*(
-        r + gamma*max(Q[s], key=Q[s].get) - Q[s,a])
+    return Q[s][a] + alpha*(
+        r + gamma*max(Q[s], key=Q[s].get) - Q[s][a])
 
 def is_terminal(s: str) -> bool:
     # checks whether state is terminal or not
@@ -49,7 +49,7 @@ def step(
     s_prime = s
     s_prime[a] = player
 
-    Q[s, a] = update(Q, alpha, gamma, s, a, r, s_prime)
+    Q[s][a] = update(Q, alpha, gamma, s, a, r, s_prime)
 
     s = s_prime
 
