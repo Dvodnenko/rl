@@ -84,7 +84,9 @@ def step(
     
     a = None
     if game and player == PLAYER:
-        print(np.array(list(s)).reshape(3, 3))
+        print(s[0], s[1], s[2])
+        print(s[3], s[4], s[5])
+        print(s[6], s[7], s[8])
         a = int(input(f"Enter cell to put '{PLAYER}':")) - 1
     else:
         if random.random() < epsilon:
@@ -171,10 +173,13 @@ def episode(
 
 if __name__ == "__main__":
     print("learning...")
-    for i in range(50_000):
+    for i in range(100_000):
         Q_x, Q_o, _, _ = episode(Q_x, Q_o, "---------", False, alpha, gamma, epsilon)
 
     while True:
-        _, _, result = episode(Q_x, Q_o, "---------", True, alpha, gamma, 0)
+        _, _, result, s = episode(Q_x, Q_o, "---------", True, alpha, gamma, 0)
+        print(s[0], s[1], s[2])
+        print(s[3], s[4], s[5])
+        print(s[6], s[7], s[8])
         print(result)
         print()
