@@ -23,7 +23,7 @@ Q_o: dict[str, dict[int, float]] = {}
 
 def update(Q, alpha, gamma, s, a, r, s_prime) -> float:
     return Q[s][a] + alpha*(
-        r + gamma*max(Q[s_prime], default=0) - Q[s][a])
+        r + gamma*max(Q[s_prime].values(), default=0) - Q[s][a])
 
 terminal_states: dict[str, tuple[bool, str | None]] = {}
 
