@@ -22,7 +22,7 @@ Q_o: dict[str, dict[int, float]] = {}
 
 def update(Q, alpha, gamma, s, a, r, s_prime) -> float:
     return Q[s][a] + alpha*(
-        r + gamma*max(Q[s], key=Q[s].get) - Q[s][a])
+        r + gamma*max(Q[s_prime], default=0) - Q[s][a])
 
 terminal_states: dict[str, tuple[bool, str | None]] = {}
 
@@ -90,6 +90,8 @@ def step(
     s_prime = list(s)
     s_prime[a] = player
     s_prime = "".join(s_prime)
+    if not Q.get(s_prime):
+        Q[s_prime] = {a: 0 for a in A(s_prime)}
 
     terminal, winner = is_terminal(s_prime)
     if terminal:
