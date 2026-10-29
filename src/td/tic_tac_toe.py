@@ -4,9 +4,10 @@ import numpy as np
 
 
 # hyperparemeters
-alpha: float = .5
+alpha: float = .25
 gamma: float = 1 # undiscounted task
 epsilon: float = .2
+PLAYER = 'x'
 
 
 def A(s: str) -> list[int]:
@@ -76,16 +77,22 @@ def step(
     alpha: float,
     gamma: float,
     epsilon: float,
+    game: bool,
 ):
     r = 0
 
-    a = None
     if not Q.get(s):
         Q[s] = {a: 0 for a in A(s)}
-    if random.random() < epsilon:
-        a = random.choice(A(s))
+    
+    a = None
+    if game and player == PLAYER:
+        print(np.array(list(s)).reshape(3, 3))
+        a = int(input(f"Enter cell to put '{PLAYER}':")) - 1
     else:
-        a = max(Q[s], key=Q[s].get)
+        if random.random() < epsilon:
+            a = random.choice(A(s))
+        else:
+            a = max(Q[s], key=Q[s].get)
 
     s_prime = list(s)
     s_prime[a] = player
@@ -112,6 +119,7 @@ def episode(
     Q_x: dict,
     Q_o: dict,
     s: str,
+    game: bool = False,
     alpha: float = .5,
     gamma: float = 1,
     epsilon: float = .1,
@@ -119,8 +127,20 @@ def episode(
     terminal = False
     winner = None
     while not terminal:
-        Q_x, s, terminal, winner = step('x', Q_x, s, alpha, gamma, epsilon)
+        Q_x, s, terminal, winner = step('x', Q_x, s, alpha, gamma, epsilon, game)
         if terminal: break
-        Q_o, s, terminal, winner = step('o', Q_o, s, alpha, gamma, epsilon)
+        Q_o, s, terminal, winner = step('o', Q_o, s, alpha, gamma, epsilon, game)
 
     return Q_x, Q_o, winner
+
+
+if __name__ == "__main__":
+    for i in range(100_000):
+        # print(i)
+        Q_x, Q_o, _ = episode(Q_x, Q_o, "---------", False, alpha, gamma, epsilon)
+
+    print("Game")
+    while True:
+        _, _, winner = episode(Q_x, Q_o, "---------", True, alpha, gamma, 0)
+        print(f"Winner: {winner}!")
+        print()
