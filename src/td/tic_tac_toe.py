@@ -24,9 +24,12 @@ def update(Q, alpha, gamma, s, a, r, s_prime) -> float:
     return Q[s][a] + alpha*(
         r + gamma*max(Q[s], key=Q[s].get) - Q[s][a])
 
-def is_terminal(s: str) -> bool:
-    # checks whether state is terminal or not
-    ...
+terminal_states: dict[str, tuple[bool, str | None]] = {}
+
+TERMINAL_COMBINATIONS = (
+    ('x', 'x', 'x'),
+    ('o', 'o', 'o'),
+)
 
 def step(
     player: str, 
