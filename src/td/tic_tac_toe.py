@@ -44,7 +44,7 @@ def is_terminal(s: str) -> tuple[bool, str]:
         for row in table:
             if row in TERMINAL_COMBINATIONS:
                 terminal_states[s] = (True, row[0])
-                break
+                return terminal_states[s]
             
         # 2. check columns
         for col in range(3):
@@ -53,19 +53,19 @@ def is_terminal(s: str) -> tuple[bool, str]:
                 column.append(row[col])
             if tuple(column) in TERMINAL_COMBINATIONS:
                 terminal_states[s] = (True, table[0][col])
-                break
+                return terminal_states[s]
         
         # 3. check diagonals
         if (s[0], s[4], s[8]) in TERMINAL_COMBINATIONS or \
             (s[2], s[4], s[6]) in TERMINAL_COMBINATIONS:
             terminal_states[s] = (True, s[4])
+            return terminal_states[s]
 
-        # 4. check if board is full (draw)
-        if s.count('-') == 0:
-            terminal_states[s] = (True, None)
-        
         if not terminal_states.get(s):
-            terminal_states[s] = (False, None)
+            if s.count('-') == 0:
+                terminal_states[s] = (True, None)
+            else:
+                terminal_states[s] = (False, None)
     
     return terminal_states[s]
 
