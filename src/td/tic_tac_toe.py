@@ -77,7 +77,7 @@ def step(
     gamma: float,
     epsilon: float,
 ):
-    r = None
+    r = 0
 
     a = None
     if not Q.get(s):
@@ -89,14 +89,21 @@ def step(
 
     s_prime = s
     s_prime[a] = player
+    terminal, winner = is_terminal(s_prime)
+    if terminal:
+        match winner:
+            case player:
+                r = 1
+            case None:
+                r = 0
+            case _:
+                r = -1
 
     Q[s][a] = update(Q, alpha, gamma, s, a, r, s_prime)
 
     s = s_prime
 
-    terminal = is_terminal(s)
-
-    return Q, s, terminal
+    return Q, s, terminal, winner
 
 def episode(
     Q_x: dict,
@@ -107,9 +114,10 @@ def episode(
     epsilon: float = .1,
 ):
     terminal = False
+    winner = None
     while not terminal:
-        Q_x, s, terminal = step('x', Q_x, s, alpha, gamma, epsilon)
+        Q_x, s, terminal, winner = step('x', Q_x, s, alpha, gamma, epsilon)
         if terminal: break
-        Q_o, s, terminal = step('o', Q_o, s, alpha, gamma, epsilon)
+        Q_o, s, terminal, winner = step('o', Q_o, s, alpha, gamma, epsilon)
 
-    return Q_x, Q_o
+    return Q_x, Q_o, winner
