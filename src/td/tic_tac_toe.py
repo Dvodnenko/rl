@@ -79,8 +79,6 @@ def step(
     epsilon: float,
     game: bool,
 ):
-    r = 0
-
     if not Q.get(s):
         Q[s] = {a: 0 for a in A(s)}
     
@@ -100,20 +98,7 @@ def step(
     if not Q.get(s_prime):
         Q[s_prime] = {a: 0 for a in A(s_prime)}
 
-    terminal, winner = is_terminal(s_prime)
-    if terminal:
-        if winner == player:
-            r = 1
-        elif winner == None:
-            r = 0
-        else:
-            r = -1
-
-    Q[s][a] = update(Q, alpha, gamma, s, a, r, s_prime)
-
-    s = s_prime
-
-    return Q, s, terminal, winner
+    return a, s_prime
 
 def episode(
     Q_x: dict,
@@ -124,23 +109,72 @@ def episode(
     gamma: float = 1,
     epsilon: float = .1,
 ):
-    terminal = False
-    winner = None
-    while not terminal:
-        Q_x, s, terminal, winner = step('x', Q_x, s, alpha, gamma, epsilon, game)
-        if terminal: break
-        Q_o, s, terminal, winner = step('o', Q_o, s, alpha, gamma, epsilon, game)
+    result = None
+    psar: list[str, int] = [s, -1] # Previous State-Action Pair
 
-    return Q_x, Q_o, winner
+    while True:
+        # player X makes move
+        a_x, s_prime = step('x', Q_x, s, alpha, gamma, epsilon, game)
+        if is_terminal(s_prime)[0]:
+            if is_terminal(s_prime)[1] == 'x':
+                Q_x[s][a_x] = update(Q_x, alpha, gamma, s, a_x, 1, s_prime)
+                if not Q_o.get(s_prime):
+                    Q_o[s_prime] = {a: 0 for a in A(s_prime)}
+                Q_o[psar[0]][psar[1]] = update(
+                    Q_o, alpha, gamma, psar[0], psar[1], -1, s_prime)
+                result = 'X Wins!'
+                s = s_prime
+                break
+            else:
+                Q_x[s][a_x] = update(Q_x, alpha, gamma, s, a_x, 0, s_prime)
+                if not Q_o.get(s_prime):
+                    Q_o[s_prime] = {a: 0 for a in A(s_prime)}
+                Q_o[psar[0]][psar[1]] = update(
+                    Q_o, alpha, gamma, psar[0], psar[1], 0, s_prime)
+                result = 'Draw!'
+                s = s_prime
+                break
+        else:
+            Q_x[s][a_x] = update(Q_x, alpha, gamma, s, a_x, 0, s_prime)
+            psar = [s, a_x]
+            s = s_prime
+        
+        
+        # player O makes move
+        a_o, s_prime = step('o', Q_o, s, alpha, gamma, epsilon, game)
+        if is_terminal(s_prime)[0]:
+            if is_terminal(s_prime)[1] == 'o':
+                Q_o[s][a_o] = update(Q_o, alpha, gamma, s, a_o, 1, s_prime)
+                if not Q_x.get(s_prime):
+                    Q_x[s_prime] = {a: 0 for a in A(s_prime)}
+                Q_x[psar[0]][psar[1]] = update(
+                    Q_x, alpha, gamma, psar[0], psar[1], -1, s_prime)
+                result = 'O Wins!'
+                s = s_prime
+                break
+            else:
+                Q_o[s][a_o] = update(Q_o, alpha, gamma, s, a_o, 0, s_prime)
+                if not Q_x.get(s_prime):
+                    Q_x[s_prime] = {a: 0 for a in A(s_prime)}
+                Q_x[psar[0]][psar[1]] = update(
+                    Q_x, alpha, gamma, psar[0], psar[1], 0, s_prime)
+                result = 'Draw!'
+                s = s_prime
+                break
+        else:
+            Q_o[s][a_o] = update(Q_o, alpha, gamma, s, a_o, 0, s_prime)
+            psar = [s, a_o]
+            s = s_prime
+
+    return Q_x, Q_o, result, s
 
 
 if __name__ == "__main__":
-    for i in range(100_000):
-        # print(i)
-        Q_x, Q_o, _ = episode(Q_x, Q_o, "---------", False, alpha, gamma, epsilon)
+    print("learning...")
+    for i in range(50_000):
+        Q_x, Q_o, _, _ = episode(Q_x, Q_o, "---------", False, alpha, gamma, epsilon)
 
-    print("Game")
     while True:
-        _, _, winner = episode(Q_x, Q_o, "---------", True, alpha, gamma, 0)
-        print(f"Winner: {winner}!")
+        _, _, result = episode(Q_x, Q_o, "---------", True, alpha, gamma, 0)
+        print(result)
         print()
