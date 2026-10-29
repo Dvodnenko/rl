@@ -87,17 +87,18 @@ def step(
     else:
         a = max(Q[s], key=Q[s].get)
 
-    s_prime = s
+    s_prime = list(s)
     s_prime[a] = player
+    s_prime = "".join(s_prime)
+
     terminal, winner = is_terminal(s_prime)
     if terminal:
-        match winner:
-            case player:
-                r = 1
-            case None:
-                r = 0
-            case _:
-                r = -1
+        if winner == player:
+            r = 1
+        elif winner == None:
+            r = 0
+        else:
+            r = -1
 
     Q[s][a] = update(Q, alpha, gamma, s, a, r, s_prime)
 
