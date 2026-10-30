@@ -92,7 +92,9 @@ def step(
         if random.random() < epsilon:
             a = random.choice(A(s))
         else:
-            a = max(Q[s], key=Q[s].get)
+            max_val = max(Q[s].values())
+            argmax_all = [a for a, v in Q[s].items() if v == max_val]
+            a = random.choice(argmax_all)
 
     s_prime = list(s)
     s_prime[a] = player
