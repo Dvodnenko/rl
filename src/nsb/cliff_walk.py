@@ -34,7 +34,9 @@ def policy(
     "epsilon greedy with respect to Q"
     if random.random() < epsilon:
         return random.choice((0, 1, 2, 3))
-    return max(Q[state], key=Q[state].get)
+    max_val = max(Q[state].values())
+    argmax_all = [a for a, v in Q[state].items() if v == max_val]
+    return random.choice(argmax_all)
 
 def episode(
     alpha: float,
