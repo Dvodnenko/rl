@@ -1,3 +1,6 @@
+import random
+
+
 def move(state: tuple[int], action: tuple[int]) -> tuple[tuple, float]:
     "interaction with the environment. returns next state and reward"
 
@@ -21,3 +24,13 @@ ACTIONS = {
     "right": (1, 0),
     "left": (-1, 0),
 }
+
+def policy(
+    epsilon: float,
+    Q: dict[tuple, dict[tuple, float]],
+    state: tuple,
+) -> tuple:
+    "epsilon greedy with respect to Q"
+    if random.random() < epsilon:
+        return random.choice(ACTIONS.values())
+    return max(Q[state].values(), key=Q.get)
