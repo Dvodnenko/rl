@@ -13,3 +13,11 @@ def move(state: tuple[int], action: tuple[int]) -> tuple[tuple, float]:
         return state, -1
 
     return next_state, -1
+
+
+ACTIONS = {
+    "up": (0, -1),
+    "down": (0, 1),
+    "right": (1, 0),
+    "left": (-1, 0),
+}
