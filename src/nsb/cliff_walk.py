@@ -34,7 +34,7 @@ def policy(
     "epsilon greedy with respect to Q"
     if random.random() < epsilon:
         return random.choice((0, 1, 2, 3))
-    return max(Q[state].values(), key=Q.get)
+    return max(Q[state], key=Q[state].get)
 
 def episode(
     alpha: float,
@@ -44,7 +44,7 @@ def episode(
     Q: dict[tuple, dict[int, float]],
     policy,
 ):
-    a = policy(epsilon, Q, state)
+    a = policy(epsilon, Q, (1, 4))
     T = float("inf")
     t = 0
 
@@ -57,14 +57,14 @@ def episode(
         if t < T:
             state = states[t]
             action = actions[t]
-            next_state, reward = move(s, action)
+            next_state, reward = move(states[t], action)
             states.append(next_state)
             rewards.append(reward)
 
             if next_state == TERMINAL_STATE:
                 T = t + 1
             else:
-                actions.append(policy(epsilon, Q, state))
+                actions.append(policy(epsilon, Q, states[t+1]))
         
         tau = t - n + 1
 
@@ -73,7 +73,7 @@ def episode(
                     for i in range(tau+1, min(tau+n, T)+1))
             if tau+n < T:
                 G = G + pow(gamma, n)*Q[states[tau+n]][actions[tau+n]]
-            Q[states[tau+n]][actions[tau+n]] += alpha*(G - Q[states[tau+n]][actions[tau+n]])
+            Q[states[tau]][actions[tau]] += alpha*(G - Q[states[tau]][actions[tau]])
 
         t += 1
 
@@ -93,3 +93,6 @@ def init_Q():
 
 if __name__ == "__main__":
     Q = init_Q()
+
+    for i in range(100):
+        Q = episode(.5, 1, .1, 1, Q, policy)
