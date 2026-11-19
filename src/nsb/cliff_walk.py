@@ -1,9 +1,16 @@
 import random
 
 
-def move(state: tuple[int], action: tuple[int]) -> tuple[tuple, float]:
-    "interaction with the environment. returns next state and reward"
+ACTIONS = {
+    0: (0, -1), # up
+    1: (0, 1),  # down
+    2: (1, 0),  # right
+    3: (-1, 0), # left
+}
 
+def move(state: tuple[int], action: int) -> tuple[tuple, float]:
+    "interaction with the environment. returns next state and reward"
+    action = ACTIONS[action]
     next_state = (state[0]+action[0], state[1]+action[1])
 
     # if in the cliff
@@ -17,23 +24,16 @@ def move(state: tuple[int], action: tuple[int]) -> tuple[tuple, float]:
 
     return next_state, -1
 
-
-ACTIONS = {
-    "up": (0, -1),
-    "down": (0, 1),
-    "right": (1, 0),
-    "left": (-1, 0),
-}
 TERMINAL_STATE = (12, 4)
 
 def policy(
     epsilon: float,
-    Q: dict[tuple, dict[tuple, float]],
+    Q: dict[tuple, dict[int, float]],
     state: tuple,
-) -> tuple:
+) -> int:
     "epsilon greedy with respect to Q"
     if random.random() < epsilon:
-        return random.choice(ACTIONS.values())
+        return random.choice((0, 1, 2, 3))
     return max(Q[state].values(), key=Q.get)
 
 def episode(
@@ -41,7 +41,7 @@ def episode(
     gamma: float,
     epsilon: float,
     n: int,
-    Q: dict[tuple, dict[tuple, float]],
+    Q: dict[tuple, dict[int, float]],
     policy,
 ):
     a = policy(epsilon, Q, state)
